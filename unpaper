@@ -1,4 +1,4 @@
-#!/bin/bash -xe
+#!/bin/bash -x
 
 # DEPENDENCIES
 # curl - for downloading files (alternative might be wget)
