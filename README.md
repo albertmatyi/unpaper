@@ -10,8 +10,14 @@ A linux bash script for setting wallpapers randomly downloaded from [unsplash.co
 minutes
 
 
-## DEPENDENCIES
+## Dependencies
 
 * `curl` - for downloading files (alternative might be `wget`)
 * `feh` - for setting a wallpaper (can use `nitrogen` as well or others)
 * `xorg-xrandr` - for figuring out screen resolution (instead of hardcoding)
+
+## Future
+
+* provide other command line args
+* create an *AUR* package out of it (complete the PKGBUILD file & upload)
+* add a small UI (`xfltk`, `gtk` or `nwjs.io`)
