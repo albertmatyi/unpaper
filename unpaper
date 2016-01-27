@@ -1,8 +1,12 @@
 #!/bin/bash -xe
 
+# String: random | buildings | food | nature | people | technology | objects
 CATEGORY=random
-TIMEOUT=3
+# Int(seconds): 300+ / 5min+
+TIMEOUT=300
+# String: --bg-center | --bg-fill | --bg-scale | --bg-max | --bg-tile
 BG_TYPE=--bg-fill
+
 RESOLUTION=$(xrandr -q | grep -oP '(?<=connected )(\d+x\d+)' --color=auto)
 
 while [[ true ]]; do
