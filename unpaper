@@ -1,0 +1,12 @@
+#!/bin/bash -xe
+
+CATEGORY=random
+TIMEOUT=3
+BG_TYPE=--bg-fill
+RESOLUTION=$(xrandr -q | grep -oP '(?<=connected )(\d+x\d+)' --color=auto)
+
+while [[ true ]]; do
+  curl -L https://source.unsplash.com/$CATEGORY/$RESOLUTION > ~/tmp/unpaper.jpg
+  feh $BG_TYPE ~/tmp/unpaper.jpg
+  sleep $TIMEOUT
+done
