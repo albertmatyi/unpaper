@@ -4,6 +4,7 @@
 # curl - for downloading files (alternative might be wget)
 # feh - for setting a wallpaper (can use nitrogen as well or others)
 # xorg-xrandr - for figuring out screen resolution (instead of hardcoding)
+# imagemagick - for branding
 
 # String: random | buildings | food | nature | people | technology | objects
 CATEGORY=random
@@ -13,10 +14,30 @@ TIMEOUT=300
 BG_TYPE=--bg-fill
 # Will contain something like 1600x900
 RESOLUTION=$(xrandr -q | grep -oP '(?<=connected )(\d+x\d+)' --color=auto)
+# The position of the branding logo:
+# NorthWest | North | NorthEast | West | Center | East | SouthWest | South | SouthEast
+BRAND_POSITION=SouthEast
+
+function getScriptDir() {
+  local SOURCE="${BASH_SOURCE[0]}"
+  while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
+    local DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+    local SOURCE="$(readlink "$SOURCE")"
+    [[ $SOURCE != /* ]] && local SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+  done
+  local DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+  echo $DIR
+}
+
+SCRIPT_DIR=$(getScriptDir)
 
 function setWallpaper () {
   curl -L https://source.unsplash.com/$CATEGORY/$RESOLUTION > ~/tmp/unpaper.jpg
-  feh $BG_TYPE ~/tmp/unpaper.jpg
+  composite -gravity $BRAND_POSITION "$SCRIPT_DIR/brand_logo.png" ~/tmp/unpaper.jpg ./unpaper_branded.jpg
+  feh $BG_TYPE ~/tmp/unpaper_branded.jpg
+  if [[ $? != 0 ]]; then
+    feh $BG_TYPE ~/Pictures/wall.jpg
+  fi
 }
 
 if [[ $* == *-d* ]]; then
