@@ -17,6 +17,8 @@ RESOLUTION=$(xrandr -q | grep -oP '(?<=connected )(\d+x\d+)' --color=auto)
 # The position of the branding logo:
 # NorthWest | North | NorthEast | West | Center | East | SouthWest | South | SouthEast
 BRAND_POSITION=SouthEast
+# Default wallpaper path
+DEFAULT_WALLPAPER=~/Pictures/wall.jpg
 
 function getScriptDir() {
   local SOURCE="${BASH_SOURCE[0]}"
@@ -32,11 +34,15 @@ function getScriptDir() {
 SCRIPT_DIR=$(getScriptDir)
 
 function setWallpaper () {
+  # download new image
   curl -L https://source.unsplash.com/$CATEGORY/$RESOLUTION > ~/tmp/unpaper.jpg
+  # add branding
   composite -gravity $BRAND_POSITION "$SCRIPT_DIR/brand_logo.png" ~/tmp/unpaper.jpg ./unpaper_branded.jpg
+  # set wallpaper
   feh $BG_TYPE ~/tmp/unpaper_branded.jpg
+  # if fail, set defaultwallpaper
   if [[ $? != 0 ]]; then
-    feh $BG_TYPE ~/Pictures/wall.jpg
+    feh $BG_TYPE $DEFAULT_WALLPAPER
   fi
 }
 
