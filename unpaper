@@ -37,7 +37,7 @@ function setWallpaper () {
   # download new image
   curl -L https://source.unsplash.com/$CATEGORY/$RESOLUTION > ~/tmp/unpaper.jpg
   # add branding
-  composite -gravity $BRAND_POSITION "$SCRIPT_DIR/brand_logo.png" ~/tmp/unpaper.jpg ./unpaper_branded.jpg
+  composite -gravity $BRAND_POSITION "$SCRIPT_DIR/brand_logo.png" ~/tmp/unpaper.jpg ~/tmp/unpaper_branded.jpg
   # set wallpaper
   feh $BG_TYPE ~/tmp/unpaper_branded.jpg
   # if fail, set defaultwallpaper
