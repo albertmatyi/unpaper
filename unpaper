@@ -13,12 +13,14 @@ TIMEOUT=300
 # String: --bg-center | --bg-fill | --bg-scale | --bg-max | --bg-tile
 BG_TYPE=--bg-fill
 # Will contain something like 1600x900
-RESOLUTION=$(xrandr -q | grep -oP '(?<=connected )(\d+x\d+)' --color=auto)
+RESOLUTION=$(xrandr -q | grep -oP '(?<=connected primary )(\d+x\d+)' --color=auto)
 # The position of the branding logo:
 # NorthWest | North | NorthEast | West | Center | East | SouthWest | South | SouthEast
 BRAND_POSITION=SouthEast
 # Default wallpaper path
 DEFAULT_WALLPAPER=~/Pictures/wall.jpg
+# path where unpapers shall be stored
+TMP_DIR=~/tmp/unpaper
 
 function getScriptDir() {
   local SOURCE="${BASH_SOURCE[0]}"
@@ -33,13 +35,21 @@ function getScriptDir() {
 
 SCRIPT_DIR=$(getScriptDir)
 
+mkdir -p $TMP_DIR || true
+
 function setWallpaper () {
+  if [ -f $TMP_DIR/unpaper.jpg ]; then
+	  mv $TMP_DIR/unpaper.jpg $TMP_DIR/unpaper_prev.jpg
+  fi
+  if [ -f $TMP_DIR/unpaper_branded.jpg ]; then
+	  mv $TMP_DIR/unpaper_branded.jpg $TMP_DIR/unpaper_branded_prev.jpg
+  fi
   # download new image
-  curl -L https://source.unsplash.com/$CATEGORY/$RESOLUTION > ~/tmp/unpaper.jpg
+  curl -L https://source.unsplash.com/$CATEGORY/$RESOLUTION > $TMP_DIR/unpaper.jpg
   # add branding
-  composite -gravity $BRAND_POSITION "$SCRIPT_DIR/brand_logo.png" ~/tmp/unpaper.jpg ~/tmp/unpaper_branded.jpg
+  composite -gravity $BRAND_POSITION "$SCRIPT_DIR/brand_logo.png" $TMP_DIR/unpaper.jpg $TMP_DIR/unpaper_branded.jpg
   # set wallpaper
-  feh $BG_TYPE ~/tmp/unpaper_branded.jpg
+  feh $BG_TYPE $TMP_DIR/unpaper_branded.jpg
   # if fail, set defaultwallpaper
   if [[ $? != 0 ]]; then
     feh $BG_TYPE $DEFAULT_WALLPAPER
