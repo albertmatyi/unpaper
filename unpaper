@@ -20,7 +20,10 @@ BRAND_POSITION=SouthEast
 # Default wallpaper path
 DEFAULT_WALLPAPER=~/Pictures/wall.jpg
 # path where unpapers shall be stored
-TMP_DIR=~/tmp/unpaper
+TMP_DIR=~/Pictures/unpaper
+# add 1st parameter as slogan
+SLOGAN=${1:-$UNPAPER_SLOGAN}
+SLOGAN_FONT=${UNPAPER_SLOGAN_FONT:-MontSerrat-Regular}
 
 function getScriptDir() {
   local SOURCE="${BASH_SOURCE[0]}"
@@ -48,8 +51,16 @@ function setWallpaper () {
   curl -L https://source.unsplash.com/$CATEGORY/$RESOLUTION > $TMP_DIR/unpaper.jpg
   # add branding
   composite -gravity $BRAND_POSITION "$SCRIPT_DIR/brand_logo.png" $TMP_DIR/unpaper.jpg $TMP_DIR/unpaper_branded.jpg
-  # set wallpaper
-  feh $BG_TYPE $TMP_DIR/unpaper_branded.jpg
+  WALLPAPER_PATH="$TMP_DIR/unpaper_branded.jpg"
+  
+  if [ "$SLOGAN" != "" ]; then
+    convert -background transparent -fill white -size 320x200 -gravity East -font "$SLOGAN_FONT" label:"$SLOGAN" $TMP_DIR/slogan.png
+    composite -gravity SouthEast -geometry +56+150 "$TMP_DIR/slogan.png" $WALLPAPER_PATH $TMP_DIR/unpaper_branded_slogan.jpg
+    WALLPAPER_PATH="$TMP_DIR/unpaper_branded_slogan.jpg"
+  fi
+
+  feh $BG_TYPE $WALLPAPER_PATH
+  
   # if fail, set defaultwallpaper
   if [[ $? != 0 ]]; then
     feh $BG_TYPE $DEFAULT_WALLPAPER
